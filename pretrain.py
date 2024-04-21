@@ -31,7 +31,7 @@ parser.add_argument('-b', '--batch-size', default=16, type=int,
                     metavar='N', help='mini-batch size (default: 64)')
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate')
-parser.add_argument('-c', '--checkpoint', default='./checkpoint/snoRNA_merge_124_20231028_01_checkpoint', type=str, metavar='PATH',
+parser.add_argument('-c', '--checkpoint', default='./checkpoint/snoRNA_merge_124_01_checkpoint', type=str, metavar='PATH',
                     help='path to save checkpoint (default: pretrain_checkpoint)')
 parser.add_argument('--resume', default='', type=str, metavar='PATH',
                     help='path to latest checkpoint (default: none)')
@@ -87,7 +87,7 @@ def main():
         lr = optimizer.param_groups[1]['lr']
         print('\nEpoch: [%d | %d] LR: %f' % (epoch + 1, args.epochs, lr))
         train_loss = train(train_loader, model, criterion, optimizer, epoch)
-        print(f'第 {epoch}个epoch，train_loss: {train_loss}')
+        print(f'{epoch}-th epoch，train_loss: {train_loss}')
         micro = validate(val_loader, model, criterion)
         val_micro = micro[2]
 
@@ -165,16 +165,6 @@ def validate(val_loader, model, criterion):
         oe /= len(val_loader)
         rl /= len(val_loader)
 
-        np.set_printoptions(formatter={'float': '{: 0.4}'.format})
-        print('the result of micro: \n', score_micro / len(val_loader))
-        test_p1 /= len(val_loader)
-        test_p2 /= len(val_loader)
-
-        test_ndcg1 /= len(val_loader)
-        test_ndcg2 /= len(val_loader)
-
-        print("precision@1 : %.4f , precision@2 : %.4f " % (test_p1, test_p2))
-        print("ndcg@1 : %.4f , ndcg@2 : %.4f" % (test_ndcg1, test_ndcg2))
         print("AP: %.4f , H_loss: %.4f , R_loss: %.4f , O_error: %.4f , ACC: %.4f " % (ap, hl, rl, oe, acc))
         print(f'validate_loss: {loss}')
 
