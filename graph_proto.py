@@ -33,8 +33,8 @@ class RGCN(nn.Module):
 
 
 
-labels = pd.read_csv("data/lncRNA/lncRNA_label.csv", header=None)
-features = pd.read_csv("data/bio/bio_feature.csv", header=None)
+labels = pd.read_csv("data/Benchmark Dataset/lncRNA_label.csv", header=None)
+features = pd.read_csv("data/Benchmark Dataset/feature/lncRNA_feature.csv", header=None)
 
 _, _, base_id = data_got.Bload_data(batch_size=20, num_class=3)
 noval_id = data_got.Nload_data(batch_size=20,sample_num=5,samp_freq=30, num_class=3, flag='graph')
@@ -69,8 +69,6 @@ def get_graph(labels, samples_features,label_init_dim):
     return h_g, node_features
 
 
-
-
 def get_proto(h_g, node_features, in_feats, hid_feats, bel_out_feats,inc_out_feats,iteration_num):
     proto = torch.Tensor()
 
@@ -88,7 +86,7 @@ def get_proto(h_g, node_features, in_feats, hid_feats, bel_out_feats,inc_out_fea
             optimizer1.zero_grad()
             loss1.backward()
             optimizer1.step()
-            print(f"第{i}次迭代{loss1.item()}")
+            print(f"{i}-th iteration{loss1.item()}")
 
         proto = torch.cat([proto, model1(h_g, node_features)['label']], dim=0)
 
@@ -125,33 +123,5 @@ def get_metapath_proto(g, iteration_num):
         label_emb = torch.cat((label_emb, label_emb_new), dim=0)
     return label_emb
 
-def get_f3_proto():
-    f3_g, f3_node_features = get_graph(f3_labels, f3_features, 51)
-    f3_proto = get_proto(f3_g, f3_node_features, 51, 128, 256, 3, 60)
-    return f3_proto
-
-def get_a2_proto():
-    a2_g, a2_node_features = get_graph(a2_labels, a2_features, 51)
-    a2_proto = get_proto(a2_g, a2_node_features, 51, 128, 256, 2, 30)
-    return a2_proto
-
-def get_f3_meta_graph():
-    f3_g, f3_node_features = get_graph(f3_labels, f3_features, 51)
-    f3_proto = get_proto(f3_g, f3_node_features, 51, 128, 100, 3, 60)
-    f3_mate_proto = get_metapath_proto(f3_g,60)
-    f3_proto_all = torch.cat((f3_proto, f3_mate_proto), dim=1)
-    return f3_proto_all
-
-def get_a2_meta_graph():
-    a2_g, a2_node_features = get_graph(a2_labels, a2_features, 51)
-    a2_proto = get_proto(a2_g, a2_node_features, 51, 128, 100, 2, 30)
-    a2_mate_proto = get_metapath_proto(a2_g,30)
-    a2_proto_all = torch.cat((a2_proto, a2_mate_proto), dim=1)
-    return a2_proto_all
-
 
 if __name__ == '__main__':
-
-    a2p = get_a2_meta_graph()
-
-    print("END")
