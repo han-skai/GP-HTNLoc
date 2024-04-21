@@ -7,7 +7,6 @@ from sklearn.metrics import average_precision_score
 from sklearn.metrics import label_ranking_loss
 from sklearn.metrics import accuracy_score
 
-# （Average Precision,AP)
 def average_precision(Outputs, target):
     # remove samples with all 0 or 1 targets
     non_all_zeros = ((target == 1).sum(dim=1) > 0) & ((target == 0).sum(dim=1) < target.size(1))
@@ -66,7 +65,6 @@ def hamming_loss(Pre_Labels, test_target):
 
     return result
 
-# one-Error
 def one_error(Output, target):
     """
     1.We remove samples with all-zero or all-one labels using the same code as before.
@@ -96,8 +94,8 @@ def one_error(Output, target):
 
 
 
-# Calculate the accuracy of the classifier based on the accuracy of the samples, which is consistent with Sun Xiaohan's article
-def accuracy(Y_hat, Y):     # Y_ Hat is predicting that Y is real
+
+def accuracy(Y_hat, Y):  
     Y[Y != 1] = 0
     Y_hat[Y_hat != 1] = 0
 
@@ -147,47 +145,4 @@ def coverage(Outputs, test_target):
 
     Coverage = (cover / num_instances) - 1
     return Coverage
-
-
-
-if __name__ == "__main__":
-    y_pro = torch.tensor([[0.83, 0.34, 0.123, 0.79, 0.882],
-                          [0.74, 0.456, 0.234, 0.56, 0.167],
-                          [0.34, 0.88, 0.558, 0.64, 0.589],
-                          [0.22, 0.78, 0.679, 0.35, 0.89],
-                          [0.67, 0.97, 0.267, 0.68, 0.45],
-                          [0.56, 0.245, 0.47, 0.567, 0.987]])
-    y_true = torch.tensor([[1, -1, 1, -1, -1],
-                           [-1, 1, 1, -1, -1],
-                           [1, -1, -1, 1, -1],
-                           [-1, -1, 1, -1, 1],
-                           [-1, 1, 1, -1, 1],
-                           [1, 1, -1, -1, 1]])
-    y_pre = torch.tensor([[1, 1, 0, 0, 1],
-                         [0, 1, 0, 0, 0],
-                         [0, 1, 1, 0, 0],
-                         [0, 0, 0, 1, 1],
-                         [0, 0, 1, 0, 1],
-                         [1, 1, 1, 0, 1]])
-
-    output = torch.tensor([[0.65,0.883,0.34,0.23],
-                           [0.89,0.77,0.45,0.98],
-                          [0.12,0.23,0.67,0.66]])
-
-    target = torch.tensor([[1,1,1,0],
-                           [0,0,1,1],
-                           [1,1,1,0]])
-
-    pre_label = torch.tensor([[1,0,0,1],
-                              [1,0,0,1],
-                              [1,1,1,1]])
-
-
-    print("acc: %.6f" % accuracy(y_pre, y_true))
-    print("ap: %.6f" % average_precision(y_pro, y_true))
-    print("sk_ap: %.6f" % average_precision_score(y_true, y_pro))
-    print("hl: %.6f" % hamming_loss(pre_label, target))
-    print("ol: %.6f" % one_error(y_pro, y_true))
-    print("rl: %.6f" % ranking_loss(y_pro, y_true))
-    print("coverage: %.6f" % coverage(output, target))
 
