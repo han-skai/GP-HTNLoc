@@ -1,5 +1,3 @@
-# A simple torch style logger
-# (C) Wei YANG 2017
 from __future__ import absolute_import
 import matplotlib.pyplot as plt
 import os
@@ -123,15 +121,3 @@ class Bar:
 
 
 if __name__ == '__main__':
-
-    paths = {
-        'resadvnet20': '/home/wyang/code/pytorch-classification/checkpoint/log.txt',
-        'resadvnet32': '/home/wyang/code/pytorch-classification/checkpoint/log.txt',
-        'resadvnet44': '/home/wyang/code/pytorch-classification/checkpoint/log.txt',
-    }
-
-    field = ['Valid Acc.']
-
-    monitor = LoggerMonitor(paths)
-    monitor.plot(names=field)
-    savefig('test.eps')
