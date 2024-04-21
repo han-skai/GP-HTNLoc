@@ -28,7 +28,7 @@ parser.add_argument('-b', '--batch-size', default=20, type=int,
                     metavar='N', help='mini-batch size (default: 64)')
 parser.add_argument('-c', '--checkpoint', default='imprint_checkpoint', type=str, metavar='PATH',
                     help='path to save checkpoint (default: imprint_checkpoint)')
-parser.add_argument('--model', default='./checkpoint/hsk_20230904_checkpoint/model_best.pth.tar', type=str, metavar='PATH',
+parser.add_argument('--model', default='./checkpoint/lncb20c3_checkpoint/model_best.pth.tar', type=str, metavar='PATH',
                     help='path to model (default: none)')
 parser.add_argument('--random', action='store_true', help='whether use random novel weights')
 parser.add_argument('--num_sample', default=5, type=int,
@@ -252,8 +252,7 @@ def validate(val_loader, model):
 
             output[output > 0.5] = 1
             output[output <= 0.5] = 0
-            for l in range(5):
-                F1[l] += f1_score(target[:, l], output[:, l], average='binary')
+
             acc += accuracy(output, target)
             hl += hamming_loss(output, target)
 
@@ -264,8 +263,6 @@ def validate(val_loader, model):
         oe /= len(val_loader)
         rl /= len(val_loader)
         cov /= len(val_loader)
-        np.set_printoptions(formatter={'float': '{: 0.4}'.format})
-        print('the result of F1: \n', F1/len(val_loader))
         print("AP: %.4f , H_loss: %.4f , R_loss: %.4f , O_error: %.4f , Cov_error: %.4f , ACC: %.4f " % (ap, hl, rl, oe, cov, acc))
         return one_iteration
 
