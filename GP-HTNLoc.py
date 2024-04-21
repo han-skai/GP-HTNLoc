@@ -29,7 +29,7 @@ parser.add_argument('-b', '--batch-size', default=20, type=int,
                     metavar='N', help='mini-batch size (default: 64)')
 parser.add_argument('-c', '--checkpoint', default='imprint_checkpoint', type=str, metavar='PATH',
                     help='path to save checkpoint (default: imprint_checkpoint)')
-parser.add_argument('--model', default='./checkpoint/hsk_20230904_checkpoint/model_best.pth.tar', type=str, metavar='PATH',
+parser.add_argument('--model', default='./checkpoint/20230904_checkpoint/model_best.pth.tar', type=str, metavar='PATH',
                     help='path to model (default: none)')
 parser.add_argument('--random', action='store_true', help='whether use random novel weights')
 parser.add_argument('--num_sample', default=5, type=int,
@@ -102,6 +102,7 @@ def main():
     print("each class result f1!!!!!!!!!!!!!!")
     print(F1)
 
+#  get the graph prototype
 def get_proto(train_loader,model):
     base_rep = []
     with torch.no_grad():
@@ -114,6 +115,7 @@ def get_proto(train_loader,model):
     new_weight = get_f3_meta_graph()
     return new_weight
 
+# transfer learner training
 def train(trans_model, criterion,optimizer3,real_weight,new_weight):
     trans_model.train()
     losses = []
@@ -133,7 +135,7 @@ def train(trans_model, criterion,optimizer3,real_weight,new_weight):
 
 
 
-#  This function uses a trained converter to convert the new class from a prototype to a classifier parameter
+#  This function uses a trained transfer learner to convert the new class from a prototype to a classifier parameter
 #  (with attention added to the conversion process), and then splices it with the previous majority classifier
 #  parameter to obtain the full classifier.
 def imprint(novel_loader, model, trans_model, base_sum):
@@ -148,8 +150,6 @@ def imprint(novel_loader, model, trans_model, base_sum):
                 output_stack = torch.cat((output_stack, output), 0)
                 target_stack = torch.cat((target_stack, target), 0)
 
-    # new_weight = get_a2_proto()
-    # new_weight = get_a2_proto_bi(output_stack)
     new_weight = get_a2_meta_graph()
 
     print("attention is all")
