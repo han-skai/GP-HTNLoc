@@ -7,7 +7,6 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self, num_classes, norm=True, scale=True):
         super(Net, self).__init__()
-        # self.extractor = Extractor(input_size=51, output_size=256)
         self.extractor = BiLSTM()
         self.classifier = Classifier(num_classes)
         self.s = nn.Parameter(torch.FloatTensor([10]))
@@ -66,15 +65,10 @@ class Extractor(nn.Module):
 class BiLSTM(nn.Module):
     def __init__(self):
         super(BiLSTM, self).__init__()
-        self.lstm = nn.LSTM(51, 300, 4, bidirectional=True)
+        self.lstm = nn.LSTM(286, 300, 4, bidirectional=True)
         self.linear = nn.Linear(300 * 2, 256)
 
     def forward(self, X):
-        '''
-        :param X: [batch_size, seq_len]
-        :return:
-        '''
-
         X = X.view(len(X), 1, -1)  # Change the original 2D [a, b] to 3D [a, 1, b] x=(16,1,51)
         output, (final_hidden_state, final_cell_state) = self.lstm(
             X)  # output shape: [batch_size, seq_len=1,n_hidden * 2]
