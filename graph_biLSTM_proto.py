@@ -30,8 +30,8 @@ class RGCN(nn.Module):
         return h
 
 
-labels = pd.read_csv("data/lncRNA/lncRNA_label.csv", header=None)
-features = pd.read_csv("data/bio/bio_feature.csv", header=None)
+labels = pd.read_csv("data/Benchmark Dataset/lncRNA_label.csv", header=None)
+features = pd.read_csv("data/Benchmark Dataset/feature/lncRNA_feature.csv", header=None)
 
 
 base_transf, base_sam_all,base_sam_unique= data_got.one_sample_base2avg(batch_size=20, sample_num=5,samp_freq=60, num_class=3)
@@ -102,23 +102,8 @@ def test(h_g,node_features,model):
         print("test_acc:")
         print(test_acc)
 
-def get_f3_proto_bi(f3_features):
-    f3_g, f3_node_features = get_graph(f3_labels, f3_features, 256)
-    f3_proto = get_proto(f3_g, f3_node_features, 256, 368, 256, 3, 60)
-    return f3_proto
-
-def get_a2_proto_bi(a2_features):
-    a2_g, a2_node_features = get_graph(a2_labels, a2_features, 256)
-    f2_proto = get_proto(a2_g, a2_node_features, 256, 368, 256, 2, 30)
-    return f2_proto
-
-
 
 
 
 if __name__ == '__main__':
-
-    f3p = get_f3_proto_bi(f3_features)
-    a2p = get_a2_proto_bi(a2_features)
-
     print("END")
