@@ -66,27 +66,15 @@ def hamming_loss(Pre_Labels, test_target):
     return result
 
 def one_error(Output, target):
-    """
-    1.We remove samples with all-zero or all-one labels using the same code as before.
-    2.We replace Output and target with temp_Output and temp_target.
-    3.We compute the maximum predicted value and its corresponding index using torch.max. We then use advanced indexing
-    to select the corresponding true labels (target[torch.arange(target.shape[0]), max_idxs]) and compare them to 1. We
-    also check if the maximum predicted value is greater than 0.5. If both of these conditions are true, we consider the
-    prediction to be correct. We then compute the mean of this binary indicator over all samples and subtract it from 1
-    to obtain the one-error.
-    """
-    # Step 1: Remove samples with all-zero or all-one labels
     is_all_zero = torch.all(target == 0, dim=1)
-    is_all_one = torch.all(target == 1, dim=1)    # 去除全0或全1的样本
+    is_all_one = torch.all(target == 1, dim=1)   
     valid_samples = ~(is_all_zero | is_all_one)
     temp_Output = Output[valid_samples]
     temp_target = target[valid_samples]
 
-    # Step 2: Replace Output and target with temp_Output and temp_target
     Output = temp_Output
     target = temp_target
 
-    # Step 3: Compute one-error
     max_preds, max_idxs = torch.max(Output, dim=1)
     correct_preds = (target[torch.arange(target.shape[0]), max_idxs] == 1) & (max_preds > 0.5)
     one_error = 1 - correct_preds.float().mean().item()
